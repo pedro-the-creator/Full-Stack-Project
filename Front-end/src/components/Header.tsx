@@ -1,13 +1,32 @@
 import { Link, useLocation } from "react-router";
 import { UserContext } from "../contexts/UserContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { LogOut, ShoppingCart, Box, LayoutDashboard, Plus } from "lucide-react";
 
 const Header = () => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const location = useLocation();
 
-  console.log(location);
+  console.log(location.pathname);
+
+  const handleAuthUser = async () => {
+    const response = await fetch("http://localhost:3000/me", {
+      credentials: "include",
+    });
+
+    if (response.status !== 200) {
+      console.log("deu ruim");
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    setUser(data);
+  };
+
+  useEffect(() => {
+    handleAuthUser();
+  }, []);
 
   const getNavItemClass = (path: string) => {
     const baseClass =
